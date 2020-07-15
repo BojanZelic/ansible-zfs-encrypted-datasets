@@ -1,4 +1,5 @@
 galaxy_info:
+  role_name: zfs_datasets
   author: Bojan Zelic
   description: create & mount encrypted zfs datasets
 
