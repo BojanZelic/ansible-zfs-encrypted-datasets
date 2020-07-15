@@ -1,0 +1,6 @@
+---
+defaults:
+  zfs_key: "{{ lookup('env','ZFS_KEY') | trim}}"
+  encrypted: false
+  state: present
+  mounted: true

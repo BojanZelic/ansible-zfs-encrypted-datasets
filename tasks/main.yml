@@ -1,0 +1,39 @@
+---
+- name: 'Create Encrypted Datasets containers'
+  shell: echo {{ item.value.zfs_key | default(defaults.zfs_key) }} | /sbin/zfs create -o encryption=on -o keyformat=passphrase {{ item.key }}
+  register: result
+  changed_when: result.rc == 0
+  failed_when:
+    - result.rc != 0
+    - '"dataset already exists" not in result.stderr'
+  with_dict: "{{ zfs_datasources }}"
+  when: item.value.encrypted | default(defaults.encrypted)
+  no_log: true
+
+- name: 'Load Encryption key for Encrypted Datasets'
+  shell: echo {{ item.value.zfs_key | default(defaults.zfs_key) }} | /sbin/zfs load-key {{ item.key }}
+  register: result
+  changed_when: result.rc == 0
+  failed_when:
+    - result.rc != 0
+    - '"Key already loaded" not in result.stderr'
+  with_dict: "{{ zfs_datasources }}"
+  when: item.value.encrypted | default(defaults.encrypted)
+  no_log: true
+
+- name: Ensure additional properties for datasets
+  zfs:
+    name: "{{ item.key }}"
+    state: "{{ item.value.state | default(defaults.state) }}"
+    extra_zfs_properties: "{{ item.value.extra_zfs_properties | default({}) }}"
+  with_dict: "{{ zfs_datasources }}"
+
+- name: Ensure datasets are mounted
+  shell: /sbin/zfs mount {{ item.key }}
+  register: result
+  changed_when: result.rc == 0
+  failed_when:
+    - result.rc != 0
+    - '"filesystem already mounted" not in result.stderr'
+  with_dict: '{{ zfs_datasources }}'
+  when: item.value.mounted | default(defaults.mounted)
