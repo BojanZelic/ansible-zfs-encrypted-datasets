@@ -1,17 +1,42 @@
-# Ansible ZFS Encrypted Dataset Playbook
+bojanzelic.zfs_datasets
+=========
 
 This playbook and role allows you to define a list of encrypted ZFS datasets.
 
 I used this on my proxmox setup, but it should be available 
 to use in all ZFS environments.
 
+Encryption works by loading the encryption key to zfs. The playbook then tries to mount
+the dataset. 
+
+Because it's encrypted... when you reboot the server, you'll need to run the 
+playbook to mount the dataset again.
+
+Installing
+------------
+
 Clone this repo into your roles directory:
 
 ```
-git clone git@github.com:BojanZelic/ansible-zfs-encrypted-datasets.git roles/zfs_datasets
+git clone git@github.com:BojanZelic/ansible-zfs-encrypted-datasets.git roles/bojanzelic.zfs_datasets
 ```
 
-Add it to your play's roles:
+Alternatively
+
+```
+ansible-galaxy install bojanzelic.zfs_datasets 
+```
+
+Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+
+Role Variables
+--------------
+
+Pass in the encryption key as an environmental variable `ZFS_KEY`
+
+Example Playbook
+----------------
+
 ```
 - hosts: all
   roles:
@@ -32,8 +57,12 @@ Add it to your play's roles:
           state: present
 ```
 
-Encryption works by loading the encryption key to zfs. The playbook then tries to mount
-the dataset. 
+License
+-------
 
-Because it's encrypted... when you reboot the server, you'll need to run the 
-playbook to mount the dataset again.
+GNU General Public License v3.0
+
+Author Information
+------------------
+
+Contact me at https://bojan.zelic.io
